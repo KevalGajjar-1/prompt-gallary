@@ -27,6 +27,7 @@ export default function RootLayout({
       <head>
         {/* Preconnect to Google AdSense domains for better performance */}
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        <meta name="google-adsense-account" content="ca-pub-2778127979909711" />
         <link rel="preconnect" href="https://tpc.googlesyndication.com" />
       </head>
       <body className={inter.className}>
