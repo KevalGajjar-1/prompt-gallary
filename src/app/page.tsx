@@ -131,9 +131,9 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen dark:bg-white">
       {/* Sticky Header */ }
-      <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <header className="sticky top-0 z-50 dark:bg-white bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
@@ -156,7 +156,7 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Search prompts..."
-                  className="h-10 w-64 rounded-full border-0 bg-slate-100 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                  className="h-10 w-64 rounded-full border-0 bg-slate-100 dark:bg-slate-800 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                   value={ searchQuery }
                   onChange={ (e) => setSearchQuery(e.target.value) }
                 />
@@ -193,7 +193,7 @@ export default function Home() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Page header */ }
-        <div className="mb-10 text-center">
+        <div className="mb-10 text-center dark:text-slate-200">
           <h1 className="text-4xl font-bold text-slate-800 mb-3">Explore Prompts</h1>
           <p className="text-slate-500 text-lg">Discover and share amazing AI prompts</p>
         </div>
@@ -233,7 +233,7 @@ export default function Home() {
             <span className="loading loading-spinner loading-lg text-primary"></span>
           </div>
         ) : filteredPrompts.length === 0 ? (
-          <div className="hero min-h-[60vh] bg-base-200 rounded-box">
+          <div className="hero min-h-[60vh] rounded-box">
             <div className="hero-content text-center">
               <div className="max-w-md">
                 <h1 className="text-5xl font-bold">No prompts found</h1>
