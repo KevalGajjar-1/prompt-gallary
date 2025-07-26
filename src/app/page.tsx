@@ -200,10 +200,10 @@ export default function Home() {
 
         {/* Search and filter bar */ }
         <div className="flex w-full md:flex-row justify-between items-center mb-10 gap-4">
-          <div className="relative w-full">
+          {/* <div className="relative w-full">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
-                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 dark:text-slate-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -220,10 +220,32 @@ export default function Home() {
             <input
               type="text"
               placeholder="Search prompts by title or description..."
-              className="input w-full border input-bordered pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl transition-all duration-200 h-12"
+              className="input w-full dark:text-black border input-bordered pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl transition-all duration-200 h-12"
               value={ searchQuery }
               onChange={ (e) => setSearchQuery(e.target.value) }
             />
+          </div> */}
+          <div className="relative w-full hidden md:block">
+            <input
+              type="text"
+              placeholder="Search prompts..."
+              className="h-10 w-full dark:bg-gray-200 text-black rounded-full border-0 bg-gray-200 pl-10 pr-4 text-sm focus:ring-0 focus:outline-0 focus:ring-blue-500 transition-all duration-200"
+              value={ searchQuery }
+              onChange={ (e) => setSearchQuery(e.target.value) }
+            />
+            <svg
+              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={ 2 }
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
           </div>
         </div>
 
@@ -236,8 +258,8 @@ export default function Home() {
           <div className="hero min-h-[60vh] rounded-box">
             <div className="hero-content text-center">
               <div className="max-w-md">
-                <h1 className="text-5xl font-bold">No prompts found</h1>
-                <p className="py-6">Try adjusting your search or check back later for new prompts!</p>
+                <h1 className="text-5xl font-bold dark:text-black">No prompts found</h1>
+                <p className="py-6 dark:text-black">Try adjusting your search or check back later for new prompts!</p>
                 { isAdmin && (
                   <Link
                     href="/add"
@@ -283,12 +305,12 @@ export default function Home() {
                 ) }
 
                 {/* Prompt Image */ }
-                <Link href={ `/prompts/${prompt?.id || '#'}` } className="block aspect-[4/3] relative overflow-hidden bg-slate-50">
+                <Link href={ `/prompts/${prompt?.id || '#'}` } className="block aspect-[3/3] relative overflow-hidden bg-slate-50">
                   <Image
                     src={ prompt?.image_url?.startsWith('http') ? prompt.image_url : '/placeholder.png' }
                     alt={ prompt?.title ? `${prompt.title} prompt` : 'Prompt image' }
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-contain bg-gray-200 group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     onError={ (e) => {
                       const target = e.target as HTMLImageElement;
@@ -371,16 +393,16 @@ export default function Home() {
           responsive={ true }
           className="my-8"
         />
-         <AdUnit 
-            slot="0987654321" 
-            format="auto"
-            className="mb-4"
-          />
-          <AdUnit 
-            slot="5647382910" 
-            format="auto"
-            className="mb-4"
-          />
+        <AdUnit
+          slot="0987654321"
+          format="auto"
+          className="mb-4"
+        />
+        <AdUnit
+          slot="5647382910"
+          format="auto"
+          className="mb-4"
+        />
       </div>
 
       {/* Footer */ }
