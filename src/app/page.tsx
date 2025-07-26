@@ -366,11 +366,21 @@ export default function Home() {
       {/* In-content Ad */ }
       <div className="my-12">
         <AdUnit
-          slot="your-in-content-slot-id"
+          slot="1234567890"
           format="auto"
           responsive={ true }
           className="my-8"
         />
+         <AdUnit 
+            slot="0987654321" 
+            format="auto"
+            className="mb-4"
+          />
+          <AdUnit 
+            slot="5647382910" 
+            format="auto"
+            className="mb-4"
+          />
       </div>
 
       {/* Footer */ }

@@ -9,18 +9,7 @@ type MainLayoutProps = {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="flex min-h-screen">
-      {/* Left Sidebar Ad - Desktop Only */}
-      <div className="hidden lg:block w-64 flex-shrink-0 p-4">
-        <div className="sticky top-24">
-          <AdUnit 
-            slot="your-left-sidebar-slot-id" 
-            format="auto"
-            className="mb-4"
-          />
-        </div>
-      </div>
-
+    <div className="min-h-screen">
       {/* Main Content */}
       <div className="flex-1">
         {children}
@@ -29,11 +18,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       {/* Right Sidebar Ad - Desktop Only */}
       <div className="hidden lg:block w-64 flex-shrink-0 p-4">
         <div className="sticky top-24">
-          <AdUnit 
-            slot="your-right-sidebar-slot-id" 
-            format="auto"
-            className="mb-4"
-          />
+         
         </div>
       </div>
     </div>

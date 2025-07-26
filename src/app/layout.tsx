@@ -32,33 +32,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <GoogleAdSense />
-          
-          {/* Top Banner Ad */}
-          <div className="w-full bg-white shadow-sm">
-            <div className="container mx-auto px-4">
-              <AdUnit 
-                slot="GhW6WJ"
-                format="auto"
-                responsive={true}
-                className="py-2"
-              />
-            </div>
-          </div>
-          
           <MainLayout>
             {children}
           </MainLayout>
-          
-          {/* Bottom Banner Ad */}
-          <div className="w-full bg-white border-t border-gray-100 mt-12">
-            <div className="container mx-auto px-4 py-6">
-              <AdUnit 
-                slot="GhW6WJ"
-                format="auto"
-                responsive={true}
-              />
-            </div>
-          </div>
         </AuthProvider>
         <TrackingScripts />
       </body>
