@@ -9,7 +9,7 @@ type MainLayoutProps = {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen dark:bg-white">
       {/* Main Content */}
       <div className="flex-1">
         {children}

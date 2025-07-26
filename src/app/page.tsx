@@ -145,7 +145,7 @@ export default function Home() {
                 </div>
                 <h1 className="text-xl font-bold text-slate-900">AI Prompt Gallery</h1>
               </Link> */}
-              <Image src="/prompt-gallary-logo.png" alt='prompt-gallary-logo' width={ 150 } height={ 150 }></Image>
+              <Image src="/prompt-gallary-logo.png" alt='prompt-gallary-logo' width={ 150 } height={ 40 }></Image>
               <nav className="hidden md:flex items-center gap-6">
                 <Link href="/" className="text-sm font-medium text-slate-900 hover:text-blue-600 transition-colors">Home</Link>
               </nav>
@@ -275,7 +275,7 @@ export default function Home() {
                       } }
                       className="p-2 bg-white/90 rounded-full shadow hover:bg-red-50 hover:text-red-600 transition-colors"
                       title="Delete">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={ 2 } d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </button>
@@ -388,13 +388,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              {/* <div className="text-blue-600">
-                <svg viewBox="0 0 48 48" className="h-6 w-6" fill="currentColor">
-                  <path d="M42.44 44C42.44 44 36.08 33.9 41.17 24C46.87 12.93 42.21 4 42.21 4L7 4C7 4 11.65 12.93 5.96 24C.87 33.9 7.26 44 7.26 44L42.44 44Z" />
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-slate-700">Prompt Gallery</span> */}
-              <Image src="/prompt-gallary-logo.png" alt='prompt-gallary-logo' width={ 150 } height={ 100 }></Image>
+              <Image src="/prompt-gallary-logo.png" alt='prompt-gallary-logo' width={ 150 } height={ 45 }></Image>
             </div>
             <div className="flex flex-wrap justify-center gap-1 text-sm text-slate-500">
               Made with <span className="text-red-500">❤️</span> by <a href="https://www.linkedin.com/in/keval-gajjar-web-developer-in-gandhinagar/" target="_blank" rel="noopener noreferrer" className='link'>Keval</a>
