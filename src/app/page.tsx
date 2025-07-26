@@ -18,12 +18,20 @@ export default function Home() {
   useEffect(() => {
     const fetchPrompts = async () => {
       try {
+        setLoading(true);
         const response = await fetch('/api/prompts');
-        if (!response.ok) throw new Error('Failed to fetch prompts');
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to fetch prompts');
+        }
         const data = await response.json();
-        setPrompts(data);
+        // Ensure we're working with an array
+        const promptsArray = Array.isArray(data) ? data : [];
+        setPrompts(promptsArray);
       } catch (error) {
         console.error('Error fetching prompts:', error);
+        // Set empty array on error to prevent rendering issues
+        setPrompts([]);
       } finally {
         setLoading(false);
       }
@@ -98,7 +106,7 @@ export default function Home() {
               </Link>
               <nav className="hidden md:flex items-center gap-6">
                 <Link href="/" className="text-sm font-medium text-slate-900 hover:text-blue-600 transition-colors">Home</Link>
-                <Link href="/explore" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Explore</Link>
+                {/* <Link href="/explore" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Explore</Link> */}
               </nav>
             </div>
 
@@ -236,13 +244,20 @@ export default function Home() {
                 ) }
 
                 {/* Prompt Image */ }
-                <Link href={ `/prompts/${prompt.id}` } className="block aspect-[4/3] relative overflow-hidden bg-slate-50">
+                <Link href={ `/prompts/${prompt?.id || '#'}` } className="block aspect-[4/3] relative overflow-hidden bg-slate-50">
                   <Image
-                    src={ prompt.image_url || '/placeholder.png' }
-                    alt={ prompt.title }
+                    src={ prompt?.image_url?.startsWith('http') ? prompt.image_url : '/placeholder.png' }
+                    alt={ prompt?.title ? `${prompt.title} prompt` : 'Prompt image' }
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    onError={ (e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== '/placeholder.png') {
+                        target.src = '/placeholder.png';
+                      }
+                    } }
+                    unoptimized={ process.env.NODE_ENV !== 'production' } // Disable image optimization in development
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                     <span className="text-white text-sm font-medium bg-black/50 px-2 py-1 rounded">
@@ -252,10 +267,12 @@ export default function Home() {
                 </Link>
 
                 {/* Prompt Content */ }
-                <div className="p-5">
+                <div className="p-5 pb-1">
                   <h3 className="text-lg font-semibold text-slate-800 mb-1 line-clamp-1">{ prompt.title }</h3>
                   <p className="text-sm text-slate-500 line-clamp-2 mb-4 min-h-[2.5rem]">{ prompt.description }</p>
-                  <div className="flex justify-between items-center pt-3 border-t border-slate-100">
+                </div>
+                <div>
+                  <div className="flex p-5 justify-between items-center pt-3 border-t border-slate-200">
                     <span className="text-xs text-slate-500">
                       { new Date(prompt.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',

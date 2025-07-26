@@ -218,10 +218,17 @@ export default function EditPrompt() {
                     {imagePreview || currentImageUrl ? (
                       <div className="relative w-full h-48 rounded-lg overflow-hidden">
                         <Image 
-                          src={imagePreview || currentImageUrl} 
+                          src={imagePreview || currentImageUrl || '/placeholder.png'}
                           alt="Preview" 
                           fill
                           className="object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src !== '/placeholder.png') {
+                              target.src = '/placeholder.png';
+                            }
+                          }}
+                          unoptimized={process.env.NODE_ENV !== 'production'}
                         />
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
                           <div className="bg-white/90 text-primary rounded-full p-2">
