@@ -1,15 +1,18 @@
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const { data, error: queryError } = await supabase
       .from('prompts')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (queryError) {
@@ -41,9 +44,11 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const formData = await request.formData();
     const title = formData.get('title') as string;
@@ -98,7 +103,7 @@ export async function PUT(
           ...(imageUrl && { image_url: imageUrl }),
           updated_at: new Date().toISOString()
         })
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .single();
 
@@ -143,14 +148,16 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     // First get the prompt to delete its image
     const { data: prompt, error: fetchError } = await supabase
       .from('prompts')
       .select('image_url')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError) {
@@ -186,7 +193,7 @@ export async function DELETE(
     const { error: deleteError } = await supabase
       .from('prompts')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (deleteError) {
       console.error('Error deleting prompt:', deleteError);
