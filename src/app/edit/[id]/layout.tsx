@@ -1,12 +1,7 @@
 import { Metadata } from 'next';
 
-type Props = {
-  params: { id: string }
-}
 
-export async function generateMetadata(
-  { params }: Props
-): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Edit Prompt',
     description: 'Edit an existing prompt',
