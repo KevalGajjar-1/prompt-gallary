@@ -1,19 +1,34 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const { data, error } = await supabase
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const offset = (page - 1) * limit;
+
+    // Get paginated results
+    const { data, count, error } = await supabase
       .from('prompts')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       console.error('Supabase error in GET /api/prompts:', error);
       throw new Error('Database error occurred');
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json({
+      data,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil((count || 0) / limit),
+        totalItems: count,
+        limit
+      }
+    });
   } catch (error) {
     console.error('Error in GET /api/prompts:', error);
     return NextResponse.json(

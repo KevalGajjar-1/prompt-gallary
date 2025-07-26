@@ -1,7 +1,7 @@
 // src/app/page.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Prompt } from '@/types/prompt';
@@ -12,33 +12,71 @@ export default function Home() {
   const [ prompts, setPrompts ] = useState<Prompt[]>([]);
   const [ loading, setLoading ] = useState(true);
   const [ searchQuery, setSearchQuery ] = useState('');
+  const [ page, setPage ] = useState(1);
+  const [ hasMore, setHasMore ] = useState(true);
+  const [ isFetching, setIsFetching ] = useState(false);
   const { isAdmin } = useAuth();
   const [ copiedId, setCopiedId ] = useState<string | null>(null);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
+  const fetchPrompts = useCallback(async (pageNum: number) => {
+    if (isFetching) return;
+
+    try {
+      setIsFetching(true);
+      const response = await fetch(`/api/prompts?page=${pageNum}&limit=20`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch prompts');
+      }
+      const { data, pagination } = await response.json();
+
+      setPrompts(prev => pageNum === 1 ? data : [ ...prev, ...data ]);
+      setHasMore(pageNum < pagination.totalPages);
+      setPage(pageNum);
+    } catch (error) {
+      console.error('Error fetching prompts:', error);
+    } finally {
+      setLoading(false);
+      setIsFetching(false);
+    }
+  }, [ isFetching ]);
+
+  // Initial load
   useEffect(() => {
-    const fetchPrompts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/prompts');
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || 'Failed to fetch prompts');
-        }
-        const data = await response.json();
-        // Ensure we're working with an array
-        const promptsArray = Array.isArray(data) ? data : [];
-        setPrompts(promptsArray);
-      } catch (error) {
-        console.error('Error fetching prompts:', error);
-        // Set empty array on error to prevent rendering issues
-        setPrompts([]);
-      } finally {
-        setLoading(false);
+    fetchPrompts(1);
+  }, []);
+
+  // Infinite scroll setup
+  useEffect(() => {
+    if (!hasMore || isFetching) return;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '20px',
+      threshold: 0.1
+    };
+
+    const handleObserver = (entries: IntersectionObserverEntry[]) => {
+      const target = entries[ 0 ];
+      if (target.isIntersecting && hasMore && !isFetching) {
+        fetchPrompts(page + 1);
       }
     };
 
-    fetchPrompts();
-  }, []);
+    observer.current = new IntersectionObserver(handleObserver, observerOptions);
+
+    if (loadMoreRef.current) {
+      observer.current.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [ fetchPrompts, hasMore, isFetching, page ]);
 
   // Add this function inside your component
   const handleCopy = async (description: string, id: string) => {
@@ -90,23 +128,23 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-base-100">
-      {/* Header */ }
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+    <div className="min-h-screen">
+      {/* Sticky Header */ }
+      <header className="sticky top-0 z-50 bg-white shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <Link href="/" className="flex items-center gap-3">
+              {/* <Link href="/" className="flex items-center gap-3"> 
                 <div className="text-blue-600">
                   <svg viewBox="0 0 48 48" className="h-6 w-6" fill="currentColor">
                     <path d="M42.44 44C42.44 44 36.08 33.9 41.17 24C46.87 12.93 42.21 4 42.21 4L7 4C7 4 11.65 12.93 5.96 24C.87 33.9 7.26 44 7.26 44L42.44 44Z" />
                   </svg>
                 </div>
                 <h1 className="text-xl font-bold text-slate-900">AI Prompt Gallery</h1>
-              </Link>
+              </Link> */}
+              <Image src="/prompt-gallary-logo.png" alt='prompt-gallary-logo' width={ 150 } height={ 150 }></Image>
               <nav className="hidden md:flex items-center gap-6">
                 <Link href="/" className="text-sm font-medium text-slate-900 hover:text-blue-600 transition-colors">Home</Link>
-                {/* <Link href="/explore" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Explore</Link> */}
               </nav>
             </div>
 
@@ -136,17 +174,15 @@ export default function Home() {
 
               <AdminLogin />
 
-              { isAdmin && (
-                <Link
-                  href="/add"
-                  className="btn btn-primary gap-2 px-4 py-2 rounded-full text-sm font-medium hover:shadow-md hover:shadow-primary/20 transition-all duration-200"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                  </svg>
-                  <span className="hidden sm:inline">New Prompt</span>
-                </Link>
-              ) }
+              <Link
+                href="/add"
+                className="btn btn-primary gap-2 px-4 py-2 rounded-full text-sm font-medium hover:shadow-md hover:shadow-primary/20 transition-all duration-200"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                <span className="hidden sm:inline">New Prompt</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -314,27 +350,32 @@ export default function Home() {
                 </div>
               </div>
             )) }
+            <div ref={ loadMoreRef } className="col-span-full py-4">
+              { isFetching && (
+                <div className="flex justify-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+              ) }
+            </div>
           </div>
         ) }
       </div>
 
       {/* Footer */ }
-      <footer className="mt-20 py-10 border-t border-slate-100">
+      <footer className="mt-20 py-5 border-t border-slate-100">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="text-blue-600">
+              {/* <div className="text-blue-600">
                 <svg viewBox="0 0 48 48" className="h-6 w-6" fill="currentColor">
                   <path d="M42.44 44C42.44 44 36.08 33.9 41.17 24C46.87 12.93 42.21 4 42.21 4L7 4C7 4 11.65 12.93 5.96 24C.87 33.9 7.26 44 7.26 44L42.44 44Z" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-slate-700">Prompt Gallery</span>
+              <span className="text-sm font-medium text-slate-700">Prompt Gallery</span> */}
+              <Image src="/prompt-gallary-logo.png" alt='prompt-gallary-logo' width={ 150 } height={ 100 }></Image>
             </div>
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-500">
-              <Link href="/about" className="hover:text-slate-700 transition-colors">About</Link>
-              <Link href="/terms" className="hover:text-slate-700 transition-colors">Terms</Link>
-              <Link href="/privacy" className="hover:text-slate-700 transition-colors">Privacy</Link>
-              <Link href="/contact" className="hover:text-slate-700 transition-colors">Contact</Link>
+            <div className="flex flex-wrap justify-center gap-1 text-sm text-slate-500">
+              Made with <span className="text-red-500">❤️</span> by <a href="https://www.linkedin.com/in/keval-gajjar-web-developer-in-gandhinagar/" target="_blank" rel="noopener noreferrer" className='link'>Keval</a>
             </div>
             <div className="mt-4 md:mt-0 text-xs text-slate-400">
               © { new Date().getFullYear() } Prompt Gallery. All rights reserved.

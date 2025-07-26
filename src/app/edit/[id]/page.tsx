@@ -274,7 +274,7 @@ export default function EditPrompt() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className={`btn w-full py-3 rounded-xl font-medium text-base transition-all duration-200 border-0 ${
+                  className={`btn w-full py-3 rounded-xl font-medium text-white transition-all duration-200 border-0 ${
                     isSubmitting 
                       ? 'bg-primary/80' 
                       : 'bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0'
