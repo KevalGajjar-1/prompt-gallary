@@ -1,7 +1,6 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { AdUnit } from './GoogleAdSense';
 
 type MainLayoutProps = {
   children: ReactNode;

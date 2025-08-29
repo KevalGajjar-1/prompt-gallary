@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import TrackingScripts from '@/components/TrackingScripts';
-import GoogleAdSense, { AdUnit } from '@/components/GoogleAdSense';
+import GoogleAdSense from '@/components/GoogleAdSense';
 import MainLayout from '@/components/MainLayout';
 
 const inter = Inter({ subsets: ['latin'] });

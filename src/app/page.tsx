@@ -48,6 +48,7 @@ export default function Home() {
   // Initial load
   useEffect(() => {
     fetchPrompts(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Infinite scroll setup

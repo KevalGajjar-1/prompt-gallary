@@ -29,9 +29,14 @@ async function getPrompt(id: string): Promise<Prompt> {
   return response.json();
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+type Params = Promise<{ id: string }>;
+
+export async function generateMetadata(
+  { params }: { params: Params }
+): Promise<Metadata> {
   try {
-    const prompt = await getPrompt((await params).id);
+    const { id } = await params;
+    const prompt = await getPrompt(id);
 
     return {
       title: `${prompt.title} | Prompt Gallery`,
@@ -59,6 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       },
     };
   } catch (error) {
+    console.error('Error generating metadata:', error);
     return {
       title: 'Error Loading Prompt',
       description: 'An error occurred while loading the prompt.'
@@ -66,8 +72,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-export default async function ViewPrompt({ params }: { params: Promise<{ id: string }> }) {
-  const prompt = await getPrompt((await params).id);
+export default async function ViewPrompt(
+  { params }: { params: Params }
+) {
+  const { id } = await params;
+  const prompt = await getPrompt(id);
 
   if (!prompt) {
     return (
