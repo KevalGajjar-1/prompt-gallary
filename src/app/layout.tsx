@@ -1,4 +1,3 @@
-// src/app/layout.tsx
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -6,6 +5,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import TrackingScripts from '@/components/TrackingScripts';
 import GoogleAdSense from '@/components/GoogleAdSense';
 import MainLayout from '@/components/MainLayout';
+import StoreProvider from '@/providers/StoreProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,13 +31,15 @@ export default function RootLayout({
         <link rel="preconnect" href="https://tpc.googlesyndication.com" />
       </head>
       <body className={inter.className}>
-        <AuthProvider>
-          <GoogleAdSense />
-          <MainLayout>
-            {children}
-          </MainLayout>
-        </AuthProvider>
-        <TrackingScripts />
+        <StoreProvider>
+          <AuthProvider>
+            <TrackingScripts />
+            <GoogleAdSense />
+            <MainLayout>
+              {children}
+            </MainLayout>
+          </AuthProvider>
+        </StoreProvider>
       </body>
     </html>
   );
